@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ボディメイク記録 → Instagram投稿文</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #f0f0f0;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      color: #333;
+    }
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #1e1e1e;
+        color: #f0f0f0;
+      }
+      input, textarea, button {
+        background: #2b2b2b;
+        color: #fff;
+        border: 1px solid #555;
+      }
+      #output {
+        background: #333;
+        border: 1px solid #555;
+      }
+    }
+    input, textarea, button {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #output {
+      white-space: pre-wrap;
+      margin-top: 1rem;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .tag-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .tag-options label {
+      background: #eee;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .tag-options input:checked + label {
+      background: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>ボディメイク記録 → Instagram投稿文</h1>
+
+  <label>Day数（例：1）：</label>
+  <input type="number" id="day" placeholder="例: 1" />
+
+  <label>日付：</label>
+  <input type="text" id="date" placeholder="例: 2025/04/07" />
+
+  <label>体重（kg）：</label>
+  <input type="text" id="weight" />
+
+  <label>体脂肪率（％）：</label>
+  <input type="text" id="fat" />
+
+  <label>食事内容（朝・昼・夜・おやつ）:</label>
+  <textarea id="meals" rows="5">朝：
+昼：
+夜：
+おやつ：</textarea>
+
+  <label>運動内容：</label>
+  <textarea id="workout" rows="3" placeholder="例: スクワット15×2、プランク20秒×2など"></textarea>
+
+  <label>今日のひとこと：</label>
+  <textarea id="comment" rows="2" placeholder="例: お腹がスッキリしてきた！"></textarea>
+
+  <label>ハッシュタグ（使いたいものにチェック）：</label>
+  <div class="tag-options">
+    <input type="checkbox" id="tag1" checked hidden><label for="tag1">#ボディメイク</label>
+    <input type="checkbox" id="tag2" checked hidden><label for="tag2">#ダイエット記録</label>
+    <input type="checkbox" id="tag3" checked hidden><label for="tag3">#筋トレ女子</label>
+    <input type="checkbox" id="tag4" checked hidden><label for="tag4">#食事記録</label>
+    <input type="checkbox" id="tag5" checked hidden><label for="tag5">#自分磨き</label>
+  </div>
+
+  <button onclick="generatePost()">Instagram投稿文を作成</button>
+
+  <div id="output"></div>
+
+  <script>
+    // 日付を自動設定（今日）
+    document.getElementById('date').value = new Date().toISOString().slice(0, 10);
+
+    // Day数をローカルストレージから読み込んで自動カウント
+    window.onload = function () {
+      const lastDay = localStorage.getItem('lastDay');
+      const nextDay = lastDay ? parseInt(lastDay) + 1 : 1;
+      document.getElementById('day').value = nextDay;
+    };
+
+    function generatePost() {
+      const day = document.getElementById('day').value;
+      const date = document.getElementById('date').value;
+      const weight = document.getElementById('weight').value;
+      const fat = document.getElementById('fat').value;
+      const meals = document.getElementById('meals').value;
+      const workout = document.getElementById('workout').value;
+      const comment = document.getElementById('comment').value;
+
+      let tags = [];
+      for (let i = 1; i <= 5; i++) {
+        const checkbox = document.getElementById(`tag${i}`);
+        if (checkbox.checked) {
+          tags.push(document.querySelector(`label[for=tag${i}]`).textContent);
+        }
+      }
+
+      const post = `📅 DAY${day}｜${date} ボディメイク記録\n\n` +
+                   `🏋️‍♂️ 体重：${weight}kg　体脂肪率：${fat}%\n\n` +
+                   `🍽 食事\n${meals}\n\n` +
+                   `💪 運動\n${workout}\n\n` +
+                   `💬 今日のひとこと\n${comment}\n\n` +
+                   `${tags.join(' ')}`;
+
+      document.getElementById('output').textContent = post;
+
+      // Day数を保存
+      localStorage.setItem('lastDay', day);
+    }
+  </script>
+</body>
+</html>
